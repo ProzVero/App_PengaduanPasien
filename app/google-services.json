@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "945308344004",
+    "project_id": "app-pengaduan-a28ec",
+    "storage_bucket": "app-pengaduan-a28ec.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:945308344004:android:d9d9c48d51eaf8f4e1f391",
+        "android_client_info": {
+          "package_name": "com.auliya.pengaduanpasien"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "945308344004-f8ds37t7ugnik3e4rnulje5sftsum4ft.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.auliya.pengaduanpasien",
+            "certificate_hash": "99cff55818d73e1ec4cf1749f24c1523413411dc"
+          }
+        },
+        {
+          "client_id": "945308344004-71k4silrqpplbsegn3ittp2cqmmpa2sa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrn86c_qGUv1dTKd9ZUgb6htPA0r9z_Hw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "945308344004-71k4silrqpplbsegn3ittp2cqmmpa2sa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

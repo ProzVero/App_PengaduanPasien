@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Pengaduan Pasien</string>
+    <string name="point2">2. Penanganan Pengaduan adalah proses kegiatan yang meliputi penerimaan, pencatatan, penelaahan, penyaluran, konfirmasi, klarifikasi, penelitian, pemeriksaan, Pelaporan, tindak lanjut, dan pengarsipan.</string>
+    <string name="point1">1. Pengaduan adalah laporan yang mengandung informasi atau indikasi terjadinya Pelanggaran terhadap Kode Etik dan pedoman perilaku Hakim, Pelanggaran Kode Etik dan pedoman perilaku Panitera dan Jurusita, Pelanggaran terhadap Kode Etik dan kode perilaku pegawai Aparatur Sipil Negara, Pelanggaran hukum acara atau Pelanggaran terhadap disiplin Pegawai Negeri Sipil atau peraturan disiplin militer, maladministrasi dan pelayanan publik dan/atau Pelanggaran pengelolaan keuangan dan Barang Milik Negara.</string>
+    <string name="pembuka">Berdasarkan Peraturan Mahkamah Agung Nomor 9 Tahun 2016 tentang Pedoman Penanganan Pengaduan (Whistleblowing System) di Mahkamah Agung dan Badan Peradilan yang Berada di Bawahnya :</string>
+    <string name="point3">Tujuan penanganan Pengaduan adalah untuk merespon Pengaduan baik yang berasal dari masyarakat, instansi lain di luar pengadilan, maupun dari internal pengadilan, agar citra dan wibawa lembaga peradilan tetap terjaga dan kepercayaan masyarakat terhadap lembaga peradilan meningkat.</string>
+
+    <string-array name="kelamin">
+        <item>Perempuan</item>
+        <item>Laki-Laki</item>
+    </string-array>
+
+    <string name="mapbox_access_token">pk.eyJ1IjoiYWRpbXVyZGF5YW5pIiwiYSI6ImNrcmdyNG9oazBrOTIydnFuc21kYW53YjIifQ.kKTX_r3f99B-LTG5XKmUHA</string>
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="fcm_message">FCM Message</string>
+    <string name="default_notification_channel_name" translatable="true">Weather</string>
+    <string name="msg_subscribed">Subscribed to weather topic</string>
+    <string name="msg_subscribe_failed">Failed to subscribe to weather topic</string>
+    <string name="msg_token_fmt"><![CDATA[<string name=\"msg_token_fmt\" translatable=\"false\">FCM registration Token: %s</string>]]></string>
+    <string name="directions_activity_toast_message">Salah</string>
+
+
+</resources>
