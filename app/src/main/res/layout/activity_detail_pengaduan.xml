@@ -36,6 +36,7 @@
     </androidx.appcompat.widget.Toolbar>
 
     <ScrollView
+        android:elevation="10dp"
         android:id="@+id/scrol"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -117,13 +118,12 @@
                 app:cardCornerRadius="10dp"
                 app:cardElevation="6dp">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="#33FF6D00"
                     android:orientation="vertical"
                     android:padding="16dp">
-
                     <TextView
                         android:id="@+id/text"
                         android:layout_width="wrap_content"
@@ -132,35 +132,46 @@
                         android:text="Saran Pasien"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/judul_saran"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_below="@id/text"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@id/img_aduan"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:fontFamily="@font/poppins_medium"
-                        android:textColor="@color/black"
-                        android:textSize="14sp" />
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/saran"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/poppins_regular"
-                        android:textColor="@color/black"
-                        android:textSize="12sp" />
+                        <TextView
+                            android:id="@+id/saran"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_regular"
+                            android:text="-"
+                            android:textColor="@color/black"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
 
                     <TextView
                         android:id="@+id/tanggal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="right"
+                        android:layout_below="@id/img_aduan"
+                        android:layout_alignParentEnd="true"
+                        android:text="-"
                         android:layout_marginTop="5dp"
                         android:fontFamily="@font/poppins_regular"
                         android:textColor="@color/black"
                         android:textSize="12sp" />
 
-                </LinearLayout>
+                    <ImageView
+                        android:id="@+id/img_aduan"
+                        android:layout_width="75dp"
+                        android:layout_height="100dp"
+                        android:layout_alignParentEnd="true"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_image_24" />
+
+                </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
@@ -199,17 +210,6 @@
                         android:textColor="@color/black"
                         android:textSize="14sp" />
 
-
-                    <TextView
-                        android:id="@+id/judul_saran2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="right"
-                        android:layout_marginTop="5dp"
-                        android:fontFamily="@font/poppins_medium"
-                        android:textColor="@color/black"
-                        android:textSize="14sp" />
-
                     <TextView
                         android:id="@+id/jawaban"
                         android:layout_width="wrap_content"
@@ -236,6 +236,7 @@
     </ScrollView>
 
     <com.airbnb.lottie.LottieAnimationView
+        android:elevation="7dp"
         android:id="@+id/animationView4"
         android:layout_width="match_parent"
         android:layout_height="120dp"

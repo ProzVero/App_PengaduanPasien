@@ -1,6 +1,7 @@
 package com.auliya.pengaduanpasien.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.AlertDialog;
@@ -24,6 +25,8 @@ import com.auliya.pengaduanpasien.R;
 import com.auliya.pengaduanpasien.api.URLServer;
 import com.auliya.pengaduanpasien.model.PengaduanModel;
 import com.auliya.pengaduanpasien.presentasi.PengaduanAdapter;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,17 +40,19 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class DetailPengaduan extends AppCompatActivity {
 
-    private ImageView btn_kembali;
+    private ImageView btn_kembali, imgAduan;
     private String id_pengaduan;
-    private TextView txt_judulsaran, txt_saran, txt_email, txt_nama, txt_alamat,
-            txt_tanggal, txt_judulsaran2, txt_balasan, txt_tanggal2;
+    private TextView txt_saran, txt_email, txt_nama, txt_alamat,
+            txt_tanggal, txt_balasan, txt_tanggal2;
     private SharedPreferences preferences;
     private StringRequest getIdPengaduan;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_pengaduan);
+        context = this;
         init();
     }
 
@@ -57,12 +62,11 @@ public class DetailPengaduan extends AppCompatActivity {
         txt_alamat = findViewById(R.id.alamat);
         txt_nama = findViewById(R.id.nama);
         txt_email = findViewById(R.id.email);
-        txt_judulsaran = findViewById(R.id.judul_saran);
         txt_saran = findViewById(R.id.saran);
         txt_tanggal = findViewById(R.id.tanggal);
-        txt_judulsaran2 = findViewById(R.id.judul_saran2);
         txt_balasan = findViewById(R.id.jawaban);
         txt_tanggal2 = findViewById(R.id.tanggal2);
+        imgAduan = findViewById(R.id.img_aduan);
 
         id_pengaduan = getIntent().getStringExtra("id_pengaduan");
 
@@ -73,7 +77,7 @@ public class DetailPengaduan extends AppCompatActivity {
     }
 
     public void setGetIdPengaduan() {
-        getIdPengaduan = new StringRequest(Request.Method.GET, URLServer.GETDETAIL + id_pengaduan, response -> {
+        getIdPengaduan = new StringRequest(Request.Method.GET, URLServer.GETPENGADUANID + id_pengaduan, response -> {
             try {
                 JSONObject object = new JSONObject(response);
                 if (object.getBoolean("status")) {
@@ -85,6 +89,12 @@ public class DetailPengaduan extends AppCompatActivity {
                     txt_tanggal.setText(data.getString("created_at"));
                     txt_balasan.setText(data.getString("jawaban_saran"));
                     txt_tanggal2.setText(data.getString("created_at"));
+                    Glide.with(context)
+                            .load(URLServer.URL_IMAGE_ADUAN + id_pengaduan+".png")
+                            .fitCenter()
+                            .placeholder(ContextCompat.getDrawable(context,R.drawable.ic_image_24))
+                            .apply(RequestOptions.fitCenterTransform())
+                            .into(imgAduan);
                 } else {
                     showError(object.getString("message"));
                 }
