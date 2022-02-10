@@ -105,12 +105,13 @@
                             android:layout_toStartOf="@id/btn_addfoto"
                             android:layout_width="match_parent"
                             android:layout_height="200dp">
+
                             <ImageView
                                 android:id="@+id/img_foto"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:scaleType="fitCenter"
+                                android:layout_width="match_parent"
+                                android:layout_height="200dp"
                                 android:layout_alignParentStart="true"
+                                android:scaleType="fitCenter"
                                 android:src="@drawable/ic_launcher_background" />
                         </RelativeLayout>
 

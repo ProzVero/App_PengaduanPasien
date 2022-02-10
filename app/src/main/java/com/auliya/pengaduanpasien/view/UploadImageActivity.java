@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
@@ -74,19 +75,46 @@ public class UploadImageActivity extends AppCompatActivity {
             Bundle extras = data.getExtras();
             bitmap = (Bitmap) extras.get("data");
             image.setImageBitmap(bitmap);
-            PengaduanActivity.bitmap = bitmap;
-            PengaduanActivity.mode = 1;
+            if (aduan){
+                PengaduanActivity.bitmap = bitmap;
+                PengaduanActivity.mode = 1;
+            }
             Log.d("Respon", "Img Url: " + bitmap);
         } else if (requestCode == kodeGallery && resultCode == RESULT_OK && data != null) {
             try {
                 imageUri = data.getData();
                 InputStream inputStream = getContentResolver().openInputStream(imageUri);
                 bitmap = BitmapFactory.decodeStream(inputStream);
+                Matrix matrix = new Matrix();
+                int maxSize = 1000;
+                int width =  bitmap.getWidth();
+                int height = bitmap.getHeight();
+                float bitmapRatio = width/(float)height;
                 image.setImageURI(imageUri);
+                if (bitmapRatio > 1){
+                    matrix.postRotate(90);
+                }else{
+                    matrix.postRotate(0);
+                }
+                Bitmap rotaBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
+                width =  rotaBitmap.getWidth();
+                height = rotaBitmap.getHeight();
+                bitmapRatio = width/(float)height;
+                image.setImageURI(imageUri);
+                if (bitmapRatio > 1){
+                    width = maxSize;
+                    height = (int) (width/bitmapRatio);
+                }else{
+                    height = maxSize;
+                    width = (int) (height * bitmapRatio);
+                }
 
-
-                PengaduanActivity.imgUri = imageUri;
-                PengaduanActivity.mode = 2;
+                Bitmap sizeBitmap = Bitmap.createScaledBitmap(rotaBitmap, width, height, true);
+                if (aduan) {
+                    PengaduanActivity.bitmap = sizeBitmap;
+                    PengaduanActivity.imgUri = imageUri;
+                    PengaduanActivity.mode = 2;
+                }
                 Log.d("Respon", "Img Url: " + bitmap);
             } catch (Exception e) {
                 Log.d("Respon", "Error: " + e.getMessage());

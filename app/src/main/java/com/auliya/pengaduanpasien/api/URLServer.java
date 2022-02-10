@@ -3,6 +3,7 @@ package com.auliya.pengaduanpasien.api;
 public class URLServer {
     public static final String BASE_URL = "http://rekdikpepas.my.id/";
     public static final String URL_IMAGE = "http://rekdikpepas.my.id/assets/images/";
+    public static final String URL_IMAGE_ADUAN = "http://rekdikpepas.my.id/assets/images/pengaduan/";
     public static final String API = "api/";
     public static final String LOGIN = BASE_URL + API + "auth/login";
     public static final String LOGOUT = BASE_URL + API + "auth/logout";

@@ -46,15 +46,20 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.RetryPolicy;
+import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.auliya.pengaduanpasien.R;
 import com.auliya.pengaduanpasien.api.URLServer;
+import com.auliya.pengaduanpasien.api.VolleyMultipartRequest;
 import com.auliya.pengaduanpasien.model.PengaduanModel;
+import com.auliya.pengaduanpasien.model.UserModel;
 import com.auliya.pengaduanpasien.presentasi.PengaduanAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -66,9 +71,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.sql.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -92,6 +99,7 @@ public class PengaduanActivity extends AppCompatActivity {
     private EditText  e_saran;
     public String saran, judul_saran, user_id, grup_id, nama;
     private ProgressDialog dialog;
+    private VolleyMultipartRequest kirimFoto;
     private StringRequest kirim;
     private ArrayList<PengaduanModel> dataPengaduan;
     private SharedPreferences preferences;
@@ -122,8 +130,6 @@ public class PengaduanActivity extends AppCompatActivity {
         setButton();
         setGetPengaduan();
     }
-
-
 
     private void setButton() {
         sw_data.setOnRefreshListener(() -> {
@@ -160,7 +166,11 @@ public class PengaduanActivity extends AppCompatActivity {
 
         btn_kirim.setOnClickListener(v -> {
             if (validasi()) {
-                kirimData();
+                if (cekbitmap()){
+                    uploadImage();
+                }else {
+                    kirimData();
+                }
             }
         });
 
@@ -316,6 +326,103 @@ public class PengaduanActivity extends AppCompatActivity {
         prefsEditor.commit();
     }
 
+    private void uploadImage() {
+        Log.e("Upload","user_id:"+user_id+" grupid:"+grup_id);
+        dataPengaduan = new ArrayList<>();
+        dialog.setMessage("Loading...");
+        dialog.show();
+        kirimFoto = new VolleyMultipartRequest(Request.Method.POST, URLServer.POSTGAMBARADUAN, response -> {
+            try {
+                JSONObject object = new JSONObject(new String(response.data));
+                if (object.getBoolean("status")) {
+                    JSONObject data = object.getJSONObject("data");
+                    Log.e("uploadImage",data.toString());
+                    showSuccess();
+                } else {
+                    showError(object.getString("message"));
+                }
+            } catch (JSONException e) {
+                showError(e.toString());
+            }
+            dialog.dismiss();
+        }, error -> {
+            dialog.dismiss();
+            showError(error.getMessage());
+            NetworkResponse response = error.networkResponse;
+            if (error instanceof ServerError && response != null) {
+                try {
+                    String res = new String(response.data,
+                            HttpHeaderParser.parseCharset(response.headers, "utf-8"));
+                    // Now you can use any deserializer to make sense of data
+                    JSONObject obj = new JSONObject(res);
+
+                    Log.e("uploadImage",obj.toString());
+                } catch (UnsupportedEncodingException e1) {
+                    // Couldn't properly decode data to string
+                    e1.printStackTrace();
+                } catch (JSONException e2) {
+                    // returned data is not JSONObject?
+                    e2.printStackTrace();
+                }
+            }
+        }) {
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String, String> map = new HashMap<>();
+                map.put("user_id", user_id);
+                map.put("grup_id", grup_id);
+                map.put("saran", saran);
+                return map;
+            }
+
+            @Override
+            protected Map<String, DataPart> getByteData() {
+                Map<String, DataPart> params = new HashMap<>();
+                long namaGambar = System.currentTimeMillis();
+                params.put("gambar", new DataPart(namaGambar + ".png", getByteFromBitmap(bitmap)));
+                return params;
+            }
+        };
+        kirimFoto.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 2000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 2000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+                if (Looper.myLooper() == null) {
+                    dialog.dismiss();
+                    Looper.prepare();
+                    showError("Koneksi gagal!");
+                }
+                NetworkResponse response = error.networkResponse;
+                if (error instanceof ServerError && response != null) {
+                    try {
+                        String res = new String(response.data,
+                                HttpHeaderParser.parseCharset(response.headers, "utf-8"));
+                        // Now you can use any deserializer to make sense of data
+                        JSONObject obj = new JSONObject(res);
+                    } catch (UnsupportedEncodingException e1) {
+                        // Couldn't properly decode data to string
+                        e1.printStackTrace();
+                    } catch (JSONException e2) {
+                        // returned data is not JSONObject?
+                        e2.printStackTrace();
+                    }
+                }
+            }
+        });
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(kirimFoto);
+    }
+
     private void kirimData() {
         dataPengaduan = new ArrayList<>();
         dialog.setMessage("Loading...");
@@ -330,14 +437,30 @@ public class PengaduanActivity extends AppCompatActivity {
                     showError(object.getString("message"));
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
                 showError(e.toString());
             }
             dialog.dismiss();
         }, error -> {
             dialog.dismiss();
             error.printStackTrace();
-            showError(error.toString());
+            showError(error.getMessage());
+            NetworkResponse response = error.networkResponse;
+            if (error instanceof ServerError && response != null) {
+                try {
+                    String res = new String(response.data,
+                            HttpHeaderParser.parseCharset(response.headers, "utf-8"));
+                    // Now you can use any deserializer to make sense of data
+                    JSONObject obj = new JSONObject(res);
+
+                    Log.e("uploadImage",obj.toString());
+                } catch (UnsupportedEncodingException e1) {
+                    // Couldn't properly decode data to string
+                    e1.printStackTrace();
+                } catch (JSONException e2) {
+                    // returned data is not JSONObject?
+                    e2.printStackTrace();
+                }
+            }
         }) {
             @NonNull
             @Override
@@ -372,6 +495,25 @@ public class PengaduanActivity extends AppCompatActivity {
         });
         RequestQueue koneksi = Volley.newRequestQueue(this);
         koneksi.add(kirim);
+    }
+
+    public byte[] getByteFromBitmap(Bitmap bitmap) {
+        int qualityCompress = 70;
+        byte[] bitmapData = compressBitmap(bitmap,qualityCompress);
+        int sizeKB = 200000;
+        Log.e("GetByteFromBitmap",bitmapData.length +"");
+        /*while (bitmapData.length > sizeKB){
+            qualityCompress = qualityCompress - 5;
+            bitmapData = compressBitmap(bitmap,qualityCompress);
+            Log.e("GetByteFromBitmap2",bitmapData.length+" "+qualityCompress);
+        }*/
+        return bitmapData;
+    }
+
+    public byte[] compressBitmap(Bitmap bitmap,int quality){
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, quality, bos);
+        return bos.toByteArray();
     }
 
     public void setGetPengaduan() {
@@ -466,7 +608,7 @@ public class PengaduanActivity extends AppCompatActivity {
             }
         }else if (mode == 2){
             if (imgUri!=null){
-                img_Foto.setImageURI(imgUri);
+                img_Foto.setImageBitmap(bitmap);
                 rl_1.setVisibility(View.VISIBLE);
             }
         }
@@ -480,8 +622,31 @@ public class PengaduanActivity extends AppCompatActivity {
         gettextinput();
         if (saran.isEmpty()) {
             l_saran.setError("Isi aduan tidak boleh kosong!");
-            return true;
+            return false;
+        } else if (user_id==null || grup_id==null){
+            l_saran.setError("Sistem Error!");
+            return false;
         }
         return true;
+    }
+
+    private boolean cekbitmap() {
+        if (bitmap==null){
+            return false;
+        }
+        return true;
+    }
+
+    private void showSuccess() {
+        new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
+                .setTitleText("Sukses")
+                .show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        mode = 0;
+        finish();
     }
 }

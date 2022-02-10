@@ -5,15 +5,21 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.auliya.pengaduanpasien.R;
+import com.auliya.pengaduanpasien.api.URLServer;
 import com.auliya.pengaduanpasien.model.PengaduanModel;
 import com.auliya.pengaduanpasien.view.DetailPengaduan;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
 
@@ -47,7 +53,12 @@ public class PengaduanAdapter extends RecyclerView.Adapter<PengaduanAdapter.Hold
             i.putExtra("id_pengaduan", holder.txt_id.getText().toString().trim());
             context.startActivity(i);
         });
-
+        Glide.with(context)
+                .load(URLServer.URL_IMAGE_ADUAN + String.valueOf(pengaduanModel.getId())+".png")
+                .fitCenter()
+                .placeholder(ContextCompat.getDrawable(context,R.drawable.ic_image_24))
+                .apply(RequestOptions.fitCenterTransform())
+                .into(holder.imgView);
     }
 
     @Override
@@ -58,6 +69,7 @@ public class PengaduanAdapter extends RecyclerView.Adapter<PengaduanAdapter.Hold
     public class HolderData extends RecyclerView.ViewHolder{
         private TextView   txt_saran, txt_tanggal, txt_id, nama;
         private CardView pengaduandetail;
+        private ImageView imgView;
         public HolderData(@NonNull View itemView) {
             super(itemView);
             nama = itemView.findViewById(R.id.nama);
@@ -65,6 +77,8 @@ public class PengaduanAdapter extends RecyclerView.Adapter<PengaduanAdapter.Hold
             txt_tanggal = itemView.findViewById(R.id.tanggal);
             txt_id  = itemView.findViewById(R.id.txt_id);
             pengaduandetail  = itemView.findViewById(R.id.pengaduan_detail);
+            imgView = itemView.findViewById(R.id.img_aduan);
+
         }
     }
 }
